@@ -28,10 +28,10 @@ class Module implements ModuleDefinitionInterface
         });
 
         //Registering the view component
-        $di->set('view', function() {
-            $view = new View();
-            $view->setViewsDir('../apps/api/views/');
-            return $view;
-        });
+//        $di->set('view', function() {
+//            $view = new View();
+//            $view->setViewsDir('../apps/api/views/');
+//            return $view;
+//        });
     }
 }
