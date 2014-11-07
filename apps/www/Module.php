@@ -21,7 +21,20 @@ class Module implements ModuleDefinitionInterface
     public function registerServices($di)
     {
         //Registering a dispatcher
-        $di->set('dispatcher', function() {
+        $di->set('dispatcher', function() use ($di) {
+            $eventManager = $di->getShared('eventsManager');
+            $eventManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, $exception) {
+                switch ($exception->getCode()) {
+                    case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+                    case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+                        $dispatcher->forward([
+                            'controller' => 'error',
+                            'action' => 'show404',
+                        ]);
+                        return false;
+                }
+            });
+
             $dispatcher = new Dispatcher();
             $dispatcher->setDefaultNamespace('MonPartenaire\\Www\\Controllers');
             return $dispatcher;

@@ -1,14 +1,13 @@
 <?php
 
-namespace MonPartenaire\Www\Controllers
-{
-    use Phalcon\Mvc\Controller;
+namespace MonPartenaire\Www\Controllers;
 
-    class IndexController extends Controller
+use Phalcon\Mvc\Controller;
+
+class IndexController extends Controller
+{
+    public function indexAction()
     {
-        public function indexAction()
-        {
-            //
-        }
+        //
     }
 }

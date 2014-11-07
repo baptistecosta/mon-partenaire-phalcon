@@ -1,20 +1,21 @@
 <?php
 
-namespace MonPartenaire\Api\Controllers
+namespace MonPartenaire\Api\Controllers;
+
+use Phalcon\Http\Response;
+use Phalcon\Mvc\Controller;
+use Phalcon\Mvc\Dispatcher;
+
+class IndexController extends Controller
 {
-    use Phalcon\Mvc\Controller;
-    use Phalcon\Mvc\Dispatcher;
-
-    class IndexController extends Controller
+    public function indexAction()
     {
-        public function indexAction()
-        {
-            echo json_encode(['message' => 'popo']);
-        }
+        $response = new Response();
+        return $response->setJsonContent(['message' => 'MonPartenaire - API endpoint v0.1'])
+            ->setContentType('application/json');
+    }
 
-        public function afterExecuteRoute(Dispatcher $dispatcher)
-        {
-            echo __FUNCTION__;
-        }
+    public function afterExecuteRoute(Dispatcher $dispatcher)
+    {
     }
 }
