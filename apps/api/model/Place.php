@@ -1,9 +1,11 @@
 <?php
 
-use Phalcon\Mvc\Model,
-    Phalcon\Mvc\Model\Validator\Uniqueness;
+namespace MonPartenaire\Api\Model;
 
-class Places extends Model
+use Phalcon\Mvc\Model;
+use Phalcon\Mvc\Model\Validator\Uniqueness;
+
+class Place extends Model
 {
     /**
      * @var integer

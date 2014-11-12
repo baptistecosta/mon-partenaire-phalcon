@@ -1,16 +1,12 @@
 <?php
 
-namespace MonPartenaire\Api\Models;
+namespace MonPartenaire\Api\Aggregate\Marker;
 
+use MonPartenaire\Api\Model\Place;
 use Phalcon\Mvc\Model;
 
-class PlaceSmallMarkers extends Model
+class PlaceHint
 {
-    public function getSource()
-    {
-        return 'places';
-    }
-
     public static function fetchAll(array $params = [])
     {
 //        $latSouth = floatval($params['south-west-bound']['latitude']);
@@ -23,7 +19,7 @@ class PlaceSmallMarkers extends Model
         $lngWest = 1.5963689000000159;
         $lngEast = 10.033868900000016;
 
-        $model = new PlaceSmallMarkers();
+        $model = new Place();
         $connection = $model->getReadConnection()->getInternalHandler();
         $stmt = $connection->prepare("
             SELECT

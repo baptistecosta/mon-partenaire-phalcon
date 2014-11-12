@@ -13,8 +13,9 @@ class Module implements ModuleDefinitionInterface
     {
         $loader = new Loader();
         $loader->registerNamespaces([
+            'MonPartenaire\\Api\\Aggregate' => '../apps/api/aggregate/',
             'MonPartenaire\\Api\\Controllers' => '../apps/api/controllers/',
-            'MonPartenaire\\Api\\Models' => '../apps/api/models/',
+            'MonPartenaire\\Api\\Model' => '../apps/api/model/',
         ])->register();
     }
 

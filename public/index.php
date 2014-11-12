@@ -26,6 +26,7 @@ $di->set('router', function () {
     $router->add('/api', ['module' => 'api', 'controller' => 'index', 'action' => 'index']);
     $router->addGet('/api/place-markers', ['module' => 'api', 'controller' => 'place_markers', 'action' => 'get']);
     $router->addGet('/api/place-small-markers', ['module' => 'api', 'controller' => 'place_small_markers', 'action' => 'get']);
+    $router->addGet('/api/scrapped-place-markers', ['module' => 'api', 'controller' => 'scrapped_place_markers', 'action' => 'get']);
     $router->notFound(['module' => 'www', 'controller' => 'error', 'action' => 'show404']);
     return $router;
 

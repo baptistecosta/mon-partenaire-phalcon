@@ -5,15 +5,15 @@ namespace MonPartenaire\Api\Controllers;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Dispatcher;
-use MonPartenaire\Api\Aggregate\Marker\PlaceHint as PlaceHintMarker;
+use MonPartenaire\Api\Aggregate\Marker\ScrappedPlace as ScrappedPlaceMarker;
 
-class PlaceSmallMarkersController extends Controller
+class ScrappedPlaceMarkersController extends Controller
 {
     public function getAction()
     {
         $response = new Response();
         return $response
             ->setContentType('application/json')
-            ->setJsonContent(PlaceHintMarker::fetchAll());
+            ->setJsonContent(ScrappedPlaceMarker::fetchAll());
     }
 }

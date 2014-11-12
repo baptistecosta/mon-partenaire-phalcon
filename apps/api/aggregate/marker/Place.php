@@ -1,17 +1,11 @@
 <?php
 
-namespace MonPartenaire\Api\Models;
+namespace MonPartenaire\Api\Aggregate\Marker;
 
 use Phalcon\DI;
-use Phalcon\Mvc\Model;
 
-class PlaceMarkers extends Model
+class Place
 {
-    public function getSource()
-    {
-        return 'places';
-    }
-
     public static function fetchAll(array $params = [])
     {
 //        $latSouth = floatval($params['south-west-bound']['latitude']);

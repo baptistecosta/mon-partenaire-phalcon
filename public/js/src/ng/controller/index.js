@@ -77,8 +77,7 @@
                     .success(function(res) {
                         markerService.deleteMany(scrappedPlaceMarkers);
 
-                        var markersData = res._embedded.scrapped_place_marker;
-                        scrappedPlaceMarkers = markerService.createMany(markersData, null);
+                        scrappedPlaceMarkers = markerService.createMany(res, null);
                         markerService.attachMany(scrappedPlaceMarkers, map);
                     })
                     .error(console.error);
