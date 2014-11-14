@@ -1,6 +1,6 @@
 <?php
 
-namespace MonPartenaire\Api\Aggregate\Marker;
+namespace MonPartenaire\Api\Model\Aggregate\Marker;
 
 use Phalcon\DI;
 
@@ -8,16 +8,6 @@ class Place
 {
     public static function fetchAll(array $params = [])
     {
-//        $latSouth = floatval($params['south-west-bound']['latitude']);
-//        $latNorth = floatval($params['north-east-bound']['latitude']);
-//        $lngWest = floatval($params['south-west-bound']['longitude']);
-//        $lngEast = floatval($params['north-east-bound']['longitude']);
-
-        $latSouth = 38.776287335840166;
-        $latNorth = 47.1866665542551;
-        $lngWest = 1.5963689000000159;
-        $lngEast = 10.033868900000016;
-
         $connection = DI::getDefault()->get('db')->getInternalHandler();
         $stmt = $connection->prepare("
             SELECT
@@ -30,11 +20,11 @@ class Place
             INNER JOIN place_location pl ON p.id = pl.place_id
             WHERE CONTAINS(
                 GeomFromText('POLYGON((
-                    {$lngWest} {$latSouth},
-                    {$lngWest} {$latNorth},
-                    {$lngEast} {$latNorth},
-                    {$lngEast} {$latSouth},
-                    {$lngWest} {$latSouth}
+                    {$params['lngWest']} {$params['latSouth']},
+                    {$params['lngWest']} {$params['latNorth']},
+                    {$params['lngEast']} {$params['latNorth']},
+                    {$params['lngEast']} {$params['latSouth']},
+                    {$params['lngWest']} {$params['latSouth']}
                 ))'),
                 location
             )

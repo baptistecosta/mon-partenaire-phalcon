@@ -85,7 +85,7 @@
 
             function putPlaceSmallMarker() {
                 $http
-                    .get('/api/place-small-markers', {
+                    .get('/api/place-hint-markers', {
                         params: getMapBounds()
                     })
                     .success(function(res) {

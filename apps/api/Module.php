@@ -4,6 +4,7 @@ namespace MonPartenaire\Api;
 
 use Phalcon\Loader;
 use Phalcon\Mvc\Dispatcher;
+use Phalcon\Mvc\Router;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
@@ -13,7 +14,6 @@ class Module implements ModuleDefinitionInterface
     {
         $loader = new Loader();
         $loader->registerNamespaces([
-            'MonPartenaire\\Api\\Aggregate' => '../apps/api/aggregate/',
             'MonPartenaire\\Api\\Controllers' => '../apps/api/controllers/',
             'MonPartenaire\\Api\\Model' => '../apps/api/model/',
         ])->register();

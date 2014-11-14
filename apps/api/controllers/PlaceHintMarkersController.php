@@ -5,9 +5,9 @@ namespace MonPartenaire\Api\Controllers;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Dispatcher;
-use MonPartenaire\Api\Model\Aggregate\Marker\Place as PlaceMarker;
+use MonPartenaire\Api\Model\Aggregate\Marker\PlaceHint as PlaceHintMarker;
 
-class PlaceMarkersController extends Controller
+class PlaceHintMarkersController extends Controller
 {
     public function getAction()
     {
@@ -17,7 +17,7 @@ class PlaceMarkersController extends Controller
         $response = new Response();
         return $response
             ->setContentType('application/json')
-            ->setJsonContent(PlaceMarker::fetchAll([
+            ->setJsonContent(PlaceHintMarker::fetchAll([
                 'latSouth' => $southWestBound[0],
                 'latNorth' => $northEastBound[0],
                 'lngWest' => $southWestBound[1],

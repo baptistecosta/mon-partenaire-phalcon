@@ -1,36 +1,15 @@
 <?php
 
-use Phalcon\DI\FactoryDefault;
 use Phalcon\Mvc\Application;
 use Phalcon\Exception;
 use Phalcon\Mvc\Router;
 
-$di = new FactoryDefault();
+/**
+ * Read the configuration
+ */
+$config = new \Phalcon\Config\Adapter\Json('./../config/application.json');
 
-$di->set('db', function() {
-    return new \Phalcon\Db\Adapter\Pdo\Mysql([
-        'host' => '127.0.0.1',
-        'username' => 'root',
-        'password' => '',
-        'dbname' => 'my_tennis_pal'
-    ]);
-});
-
-//Specify routes for modules
-$di->set('router', function () {
-
-    $router = new Router(false);
-    $router->setDefaultModule('www');
-    $router->add('/', ['module' => 'www', 'controller' => 'index', 'action' => 'index']);
-    $router->add('/login', ['module' => 'www', 'controller' => 'login', 'action' => 'index']);
-    $router->add('/api', ['module' => 'api', 'controller' => 'index', 'action' => 'index']);
-    $router->addGet('/api/place-markers', ['module' => 'api', 'controller' => 'place_markers', 'action' => 'get']);
-    $router->addGet('/api/place-small-markers', ['module' => 'api', 'controller' => 'place_small_markers', 'action' => 'get']);
-    $router->addGet('/api/scrapped-place-markers', ['module' => 'api', 'controller' => 'scrapped_place_markers', 'action' => 'get']);
-    $router->notFound(['module' => 'www', 'controller' => 'error', 'action' => 'show404']);
-    return $router;
-
-});
+include('./../config/services.php');
 
 try {
     //Create an application
