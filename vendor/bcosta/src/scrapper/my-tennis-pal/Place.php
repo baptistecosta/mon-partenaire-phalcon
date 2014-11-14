@@ -1,5 +1,9 @@
 <?php
+
 namespace Api\V1\Service\Place;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Message\Request;
 
 /**
  * Class Place
@@ -22,8 +26,8 @@ class Place
 
     function __construct()
     {
-        $this->httpClient = new Client(null, [
-            'sslverifypeer' => false
+        $this->httpClient = new Client([
+            'verify' => true
         ]);
     }
 
@@ -125,47 +129,39 @@ class Place
 
     private function getPlaceTypesRequest()
     {
-        $acceptHeader = new Accept();
-        $acceptHeader->addMediaType('application/json');
-
-        $req = new Request();
-        $req->setUri('http://mon-partenaire.loc/api/place-type');
-        $req->getHeaders()->addHeader($acceptHeader);
+        $req = $this->httpClient->createRequest('get', 'http://mon-partenaire.loc/api/place-type');
+        $req->addHeader('Accept', 'application/json');
         return $req;
     }
 
     private function getSearchNearbyPlaceWithTokenRequest($token)
     {
-        $req = new Request();
-        $req->setUri('https://maps.googleapis.com/maps/api/place/nearbysearch/json');
-        $req->setMethod(Request::METHOD_GET);
-        $req->setQuery(new Parameters([
+        $req = $this->httpClient->createRequest('get', 'https://maps.googleapis.com/maps/api/place/nearbysearch/json');
+        $req->setQuery([
             'key' => 'AIzaSyDbJurRkujBxXxNxCNDW1LJ3c9HtQJ6yY8',
             'pagetoken' => $token
-        ]));
+        ]);
         return $req;
     }
 
     private function getSearchNearbyPlaceRequest()
     {
-        $req = new Request();
-        $req->setUri('https://maps.googleapis.com/maps/api/place/nearbysearch/json');
-        $req->setMethod(Request::METHOD_GET);
-        $req->setQuery(new Parameters([
+        $req = $this->httpClient->createRequest('get', 'https://maps.googleapis.com/maps/api/place/nearbysearch/json');
+        $req->setQuery([
             'key' => 'AIzaSyDbJurRkujBxXxNxCNDW1LJ3c9HtQJ6yY8',
             'radius' => 50000,
             'name' => 'tennis',
             'keyword' => 'tennis',
             'language' => 'fr',
             'location' => $this->location['latitude'] . ',' . $this->location['longitude']
-        ]));
+        ]);
         return $req;
     }
 
     public function assertStatusIsOk($status)
     {
         if ($status != 'OK') {
-            throw new Exception($status);
+            throw new \Exception($status);
         }
     }
 
