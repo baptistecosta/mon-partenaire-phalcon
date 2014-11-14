@@ -4,9 +4,7 @@ use Phalcon\Mvc\Application;
 use Phalcon\Exception;
 use Phalcon\Mvc\Router;
 
-/**
- * Read the configuration
- */
+// Read the configuration
 $config = new \Phalcon\Config\Adapter\Json('./../config/application.json');
 
 include('./../config/services.php');

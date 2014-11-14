@@ -14,8 +14,9 @@ class Module implements ModuleDefinitionInterface
     {
         $loader = new Loader();
         $loader->registerNamespaces([
-            'MonPartenaire\\Api\\Controllers' => '../apps/api/controllers/',
-            'MonPartenaire\\Api\\Model' => '../apps/api/model/',
+            'MonPartenaire\\Api\\Controllers' => './../apps/api/controllers/',
+            'MonPartenaire\\Api\\Model' => './../apps/api/model/',
+            'BCosta' => './../vendor/bcosta/src',
         ])->register();
     }
 

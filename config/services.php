@@ -1,6 +1,8 @@
 <?php
 
+use BCosta\Filter\Geolocation;
 use Phalcon\DI\FactoryDefault;
+use Phalcon\Filter;
 
 $di = new FactoryDefault();
 
@@ -19,4 +21,9 @@ $di->set('db', function() use ($config) {
 //Specify routes for modules
 $di->set('router', function () {
     return include('./../config/routes.php');
+});
+
+$di->set('place-filter', function() {
+    $filter = new Filter();
+    return $filter->add('geolocation', new Geolocation());
 });
