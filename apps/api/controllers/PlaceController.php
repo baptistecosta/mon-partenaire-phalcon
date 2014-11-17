@@ -23,18 +23,19 @@ class PlaceController extends Controller
 
         /** @var Filter $filter */
         $filter = $this->di['place-filter'];
-        $inputs['geolocation'] = $filter->sanitize($post['geolocation'], 'geolocation');
+        $post['geolocation'] = $filter->sanitize($post['geolocation'], 'trim');
+        $post['geolocation'] = $filter->sanitize($post['geolocation'], 'geolocation');
 
         $validation = new Validation();
         $validation->add('geolocation', new PresenceOf([
             'message' => 'The geolocation is required'
         ]));
-        $messages = $validation->validate($inputs);
+        $messages = $validation->validate($post);
 
         if (count($messages)) {
             return $response->setJsonContent($messages);
         }
 
-        return $response->setJsonContent($inputs);
+        return $response->setJsonContent($post);
     }
 }
