@@ -2,11 +2,11 @@
 
 namespace MonPartenaire\Api\Controllers;
 
+use BCosta\Validator\Validator;
 use Phalcon\Filter;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Validation;
-use Phalcon\Validation\Validator\PresenceOf;
 
 /**
  * Class PlaceController
@@ -21,21 +21,16 @@ class PlaceController extends Controller
 
         $post = $this->request->getPost();
 
-        /** @var Filter $filter */
-        $filter = $this->di['place-filter'];
-        $post['geolocation'] = $filter->sanitize($post['geolocation'], 'trim');
-        $post['geolocation'] = $filter->sanitize($post['geolocation'], 'geolocation');
+        /** @var \BCosta\Sanitizer\Place $sanitizer */
+        $sanitizer = $this->di->get('Sanitizer\\Place');
+        $sanitizedData = $sanitizer->sanitize($post);
 
-        $validation = new Validation();
-        $validation->add('geolocation', new PresenceOf([
-            'message' => 'The geolocation is required'
-        ]));
-        $messages = $validation->validate($post);
-
-        if (count($messages)) {
-            return $response->setJsonContent($messages);
+        /** @var Validator $validator */
+        $validator = $this->di->get('Validator\\Place');
+        if (!$validator->isValid($sanitizedData)) {
+            return $response->setJsonContent($validator->getMessages());
         }
 
-        return $response->setJsonContent($post);
+        return $response->setJsonContent($sanitizedData);
     }
 }
