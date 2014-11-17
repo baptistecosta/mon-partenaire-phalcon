@@ -1,5 +1,14 @@
 <?php
 
+class A {function hello() {return 'hello';}}
+class B {
+    protected $a;
+    function __construct(A $a) {$this->a = $a;}
+    function helloFromA() {$this->a->hello();}
+}
+class C {function __construct(B $b) {}}
+
+
 use Phalcon\Mvc\Application;
 use Phalcon\Exception;
 use Phalcon\Mvc\Router;

@@ -15,6 +15,7 @@ class Module implements ModuleDefinitionInterface
         $loader->registerNamespaces([
             'MonPartenaire\\Www\\Controllers' => '../apps/www/controllers/',
             'MonPartenaire\\Www\\Models' => '../apps/www/models/',
+            'BCosta' => './../vendor/bcosta/src',
         ])->register();
     }
 

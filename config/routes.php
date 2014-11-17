@@ -4,6 +4,11 @@ use Phalcon\Mvc\Router;
 $router = new Router(false);
 $router->setDefaultModule('www');
 
+$router->add('/sand-box', [
+    'controller' => 'sand-box',
+    'action' => 'index'
+]);
+
 $router->add('/', [
     'controller' => 'index',
     'action' => 'index'
