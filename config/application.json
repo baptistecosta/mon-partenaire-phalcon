@@ -6,6 +6,13 @@
       "username": "root",
       "password": "",
       "name": "my_tennis_pal"
+    },
+    "auth": {
+      "adapter": "Mysql",
+      "host": "127.0.0.1",
+      "username": "root",
+      "password": "",
+      "name": "auth"
     }
   }
 }

@@ -1,14 +1,5 @@
 <?php
 
-class A {function hello() {return 'hello';}}
-class B {
-    protected $a;
-    function __construct(A $a) {$this->a = $a;}
-    function helloFromA() {$this->a->hello();}
-}
-class C {function __construct(B $b) {}}
-
-
 use Phalcon\Mvc\Application;
 use Phalcon\Exception;
 use Phalcon\Mvc\Router;
@@ -29,8 +20,12 @@ try {
             'path' => '../apps/www/Module.php',
         ],
         'api' => [
-            'className' => 'MonPartenaire\\api\\Module',
+            'className' => 'MonPartenaire\\Api\\Module',
             'path' => '../apps/api/Module.php',
+        ],
+        'auth' => [
+            'className' => 'MonPartenaire\\Auth\\Module',
+            'path' => '../apps/auth/Module.php',
         ]
     ]);
 
