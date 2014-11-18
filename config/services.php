@@ -26,10 +26,20 @@ $di->set('router', function () {
     return include('./../config/routes.php');
 });
 
-$di->set('Sanitizer\\Place', function() {
+$di->setShared('filter', function() {
     $filter = new Filter();
     $filter->add('geolocation', new Geolocation());
-    return new \BCosta\Sanitizer\Place($filter);
+    return $filter;
+});
+
+$di->set('Filter\\Geolocation', function() {
+    $filter = new Filter();
+    $filter->add('geolocation', new Geolocation());
+    return $filter;
+});
+
+$di->set('Sanitizer\\Place', function() use ($di) {
+    return new \BCosta\Sanitizer\Place($di->get('Filter\\Geolocation'));
 });
 
 $di->set('Validation\\Place', function() {

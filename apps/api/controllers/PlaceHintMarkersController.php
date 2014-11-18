@@ -2,6 +2,7 @@
 
 namespace MonPartenaire\Api\Controllers;
 
+use Phalcon\Filter;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Dispatcher;
@@ -11,17 +12,21 @@ class PlaceHintMarkersController extends Controller
 {
     public function getAction()
     {
-        $southWestBound = explode(',', $this->request->getQuery('south-west-bound'));
-        $northEastBound = explode(',', $this->request->getQuery('north-east-bound'));
+        /** @var Filter $filter */
+        $filter = $this->di->get('Filter\\Geolocation');
+        $southWestBound = $filter->sanitize($this->request->getQuery('south-west-bound'), 'geolocation');
+        $northEastBound = $filter->sanitize($this->request->getQuery('north-east-bound'), 'geolocation');
+
+        $foo = $this->request->getQuery('south-west-bound', 'geolocation');
 
         $response = new Response();
         return $response
             ->setContentType('application/json')
             ->setJsonContent(PlaceHintMarker::fetchAll([
-                'latSouth' => $southWestBound[0],
-                'latNorth' => $northEastBound[0],
-                'lngWest' => $southWestBound[1],
-                'lngEast' => $northEastBound[1]
+                'latSouth' => $southWestBound['latitude'],
+                'latNorth' => $northEastBound['latitude'],
+                'lngWest' => $southWestBound['longitude'],
+                'lngEast' => $northEastBound['longitude']
             ]));
     }
 }

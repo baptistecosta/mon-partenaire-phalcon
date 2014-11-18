@@ -19,11 +19,9 @@ class PlaceController extends Controller
         $response = new Response();
         $response->setContentType('application/json');
 
-        $post = $this->request->getPost();
-
         /** @var \BCosta\Sanitizer\Place $sanitizer */
         $sanitizer = $this->di->get('Sanitizer\\Place');
-        $sanitizedData = $sanitizer->sanitize($post);
+        $sanitizedData = $sanitizer->sanitize($this->request->getPost());
 
         /** @var Validator $validator */
         $validator = $this->di->get('Validator\\Place');
