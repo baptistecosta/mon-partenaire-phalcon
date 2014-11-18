@@ -2,6 +2,7 @@
 
 namespace MonPartenaire\Api\Controllers;
 
+use BCosta\Validator\Validator;
 use Phalcon\Filter;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
@@ -12,21 +13,22 @@ class PlaceHintMarkersController extends Controller
 {
     public function getAction()
     {
-        /** @var Filter $filter */
-        $filter = $this->di->get('Filter\\Geolocation');
-        $southWestBound = $filter->sanitize($this->request->getQuery('south-west-bound'), 'geolocation');
-        $northEastBound = $filter->sanitize($this->request->getQuery('north-east-bound'), 'geolocation');
-
-        $foo = $this->request->getQuery('south-west-bound', 'geolocation');
-
         $response = new Response();
+
+        /** @var Validator $validator */
+        $validator = $this->di->get('Validator\\PlaceHintMarker');
+        if (!$validator->isValid($this->request->getQuery())) {
+            return $response->setJsonContent($validator->getMessages())->setStatusCode(400, 'BadRequest');
+        }
+
+        $content = PlaceHintMarker::fetchAll([
+            'zoom' => $validator->getValue('zoom'),
+            'southWestBound' => $validator->getValue('south-west-bound'),
+            'northEastBound' => $validator->getValue('north-east-bound'),
+        ]);
+
         return $response
             ->setContentType('application/json')
-            ->setJsonContent(PlaceHintMarker::fetchAll([
-                'latSouth' => $southWestBound['latitude'],
-                'latNorth' => $northEastBound['latitude'],
-                'lngWest' => $southWestBound['longitude'],
-                'lngEast' => $northEastBound['longitude']
-            ]));
+            ->setJsonContent($content);
     }
 }

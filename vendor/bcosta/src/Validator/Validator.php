@@ -22,8 +22,23 @@ class Validator
 
     public function isValid($data)
     {
-        $this->messages = $this->validation->validate($data);
-        return count($this->messages) == 0;
+        $messages = $this->validation->validate($data);
+        if (count($messages) == 0) {
+            return true;
+        }
+        foreach ($messages as $msg) {
+            $this->messages[] = [
+                'type' => $msg->getType(),
+                'field' => $msg->getField(),
+                'message' => $msg->getMessage(),
+            ];
+        }
+        return false;
+    }
+
+    public function getValue($name)
+    {
+        return $this->validation->getValue($name);
     }
 
     public function getMessages()

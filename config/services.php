@@ -32,24 +32,35 @@ $di->setShared('filter', function() {
     return $filter;
 });
 
-$di->set('Filter\\Geolocation', function() {
-    $filter = new Filter();
-    $filter->add('geolocation', new Geolocation());
-    return $filter;
-});
-
-$di->set('Sanitizer\\Place', function() use ($di) {
-    return new \BCosta\Sanitizer\Place($di->get('Filter\\Geolocation'));
-});
-
 $di->set('Validation\\Place', function() {
     $validation = new Validation();
-    return $validation->add('geolocation', new PresenceOf([
+    $validation->add('geolocation', new PresenceOf([
         'message' => 'The geolocation is required'
     ]));
+    $validation->setFilters('geolocation', 'geolocation');
+    return $validation;
+});
+
+$di->set('Validation\\PlaceHintMarker', function() {
+    $validation = new Validation();
+    $validation->add('south-west-bound', new PresenceOf([
+        'message' => 'The south west bound is required'
+    ]));
+    $validation->add('north-east-bound', new PresenceOf([
+        'message' => 'The north east bound is required'
+    ]));
+    $validation->add('zoom', new PresenceOf([
+        'message' => 'The map zoom is required'
+    ]));
+    $validation->setFilters('south-west-bound', 'geolocation');
+    $validation->setFilters('north-east-bound', 'geolocation');
+    $validation->setFilters('zoom', 'int');
+    return $validation;
 });
 
 $di->set('Validator\\Place', function() use ($di) {
-    $validation = $di->get('Validation\\Place');
-    return new Validator($validation);
+    return new Validator($di->get('Validation\\Place'));
+});
+$di->set('Validator\\PlaceHintMarker', function() use ($di) {
+    return new Validator($di->get('Validation\\PlaceHintMarker'));
 });

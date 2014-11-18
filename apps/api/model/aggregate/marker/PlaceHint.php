@@ -2,6 +2,7 @@
 
 namespace MonPartenaire\Api\Model\Aggregate\Marker;
 
+use BCosta\Sql\Sql;
 use MonPartenaire\Api\Model\Place;
 use Phalcon\Mvc\Model;
 
@@ -11,28 +12,29 @@ class PlaceHint
     {
         $model = new Place();
         $connection = $model->getReadConnection()->getInternalHandler();
-        $stmt = $connection->prepare("
+        $stmt = $connection->prepare(sprintf("
             SELECT
-                p.id id,
-                p.name name,
+                p.id,
                 p.name title,
-                'http://mon-partenaire.loc/img/measle_5px.png' icon,
-                pl.latitude latitude,
-                pl.longitude longitude
+                pl.latitude,
+                pl.longitude
             FROM place p
-            INNER JOIN place_location pl ON p.id = pl.place_id
-            WHERE CONTAINS(
-                GeomFromText('POLYGON((
-                    {$params['lngWest']} {$params['latSouth']},
-                    {$params['lngWest']} {$params['latNorth']},
-                    {$params['lngEast']} {$params['latNorth']},
-                    {$params['lngEast']} {$params['latSouth']},
-                    {$params['lngWest']} {$params['latSouth']}
-                ))'),
-                location
-            )
-        ");
+            INNER JOIN place_location pl
+               ON p.id = pl.place_id
+            WHERE CONTAINS(GeomFromText('%s'), location)
+        ", Sql::framePolygon(
+            $params['southWestBound']['longitude'],
+            $params['southWestBound']['latitude'],
+            $params['northEastBound']['longitude'],
+            $params['northEastBound']['latitude']
+        )));
+
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        return array_map(function($r) use ($params) {
+            $r['icon'] = $params['zoom'] >= 11 ? '/img/spot.png' : '/img/measle_5px.png';
+            return $r;
+        }, $results);
     }
 }
