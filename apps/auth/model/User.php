@@ -5,6 +5,7 @@ namespace MonPartenaire\Auth\Model;
 use BCosta\Mvc\Model\PhalconModel;
 use BCosta\Security\Password;
 
+use Phalcon\Mvc\Model\Validator\StringLength;
 use Phalcon\Mvc\Model\Validator\Uniqueness;
 
 /**
@@ -34,6 +35,14 @@ class User extends PhalconModel
         $this->validate(new Uniqueness([
             'field' => 'email',
             'message' => "Cet email existe déjà en base de données"
+        ]));
+
+        $this->validate(new StringLength([
+            'field' => 'password',
+            'max' => 16,
+            'min' => 4,
+            'messageMaximum' => "Le mot de passe est trop long, 16 caractères maximum",
+            'messageMinimum' => "Le mot de passe est trop court, 4 caractères minimum"
         ]));
 
         return $this->validationHasFailed() != true;
