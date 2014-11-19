@@ -22,6 +22,11 @@ class Module implements ModuleDefinitionInterface
     public function registerServices($di)
     {
         $di->set('dispatcher', function() use ($di) {
+            $eventManager = $di->getShared('eventsManager');
+            $eventManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, $exception) {
+                //
+            });
+
             $dispatcher = new Dispatcher();
             $dispatcher->setDefaultNamespace('MonPartenaire\\Auth\\Controller');
             return $dispatcher;

@@ -21,8 +21,10 @@ class UserController extends Controller
         $user->email = $this->request->getPost('email', ['trim']);
         $user->password = $this->request->getPost('password', ['trim']);
 
-        return $response->setJsonContent([
-            'email'
-        ]);
+        if ($user->save()) {
+            return $response->setJsonContent(['id' => $user->getId()]);
+        } else {
+            return $response->setStatusCode(400, 'Bad request')->setJsonContent($user->getErrorMessages());
+        }
     }
 }
