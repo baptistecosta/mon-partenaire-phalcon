@@ -4,6 +4,8 @@ use BCosta\Filter\Geolocation;
 use BCosta\Validator\Validator;
 use Phalcon\DI\FactoryDefault;
 use Phalcon\Filter;
+use Phalcon\Flash\Session as FlashSession;
+use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
 
@@ -33,6 +35,22 @@ $di->set('db', function() use ($config) {
         'password' => $dbConfig->password,
         'dbname' => $dbConfig->name
     ]);
+});
+
+// Start the session the first time some component request the session service
+$di->set('session', function() {
+    $session = new SessionAdapter();
+    $session->start();
+    return $session;
+});
+
+// Register the flash service with Bootstrap CSS classes
+$di->set('flash', function(){
+    return new FlashSession(array(
+        'error'   => 'alert alert-danger',
+        'success' => 'alert alert-success',
+        'notice'  => 'alert alert-info',
+    ));
 });
 
 //Specify routes for modules

@@ -1,15 +1,15 @@
 <?php
 
-namespace BCosta\Mvc\Model;
+namespace BCosta\Mvc\Model\Phalcon;
 
-use Phalcon\Mvc\Model;
+use Phalcon\Mvc\Model as PhalconModel;
 use Phalcon\Mvc\Model\Message;
 
 /**
- * Class PhalconModel
- * @package BCosta\Phalcon\Mvc\Model
+ * Class Model
+ * @package BCosta\Mvc\Model\Phalcon
  */
-class PhalconModel extends Model
+class Model extends PhalconModel
 {
     public function getErrorMessages()
     {

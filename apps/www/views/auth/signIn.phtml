@@ -1,0 +1,35 @@
+<?= $this->flash->output(); ?>
+<h1>Sign In</h1>
+<form action="/auth/sign-in" id="signInForm" method="post" accept-charset="utf-8" class="ng-pristine ng-valid">
+    <div class="row">
+        <div class="form-group col-sm-2">
+            <input id="email"
+                   name="email"
+                   value="<?= isset($email) ? $email : ''; ?>"
+                   placeholder="Login"
+                   class="form-control input-sm"
+                   maxlength="64"
+                   type="text"
+                   required="required">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-2">
+            <input id="password"
+                   name="password"
+                   placeholder="Password"
+                   class="form-control input-sm"
+                   maxlength="64"
+                   type="password"
+                   required="required">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-2">
+            <div class="submit">
+                <input class="btn btn-sm btn-primary" type="submit" value="Sign In">
+            </div>
+        </div>
+    </div>
+</form>
+<a href="/auth/register">Register</a>

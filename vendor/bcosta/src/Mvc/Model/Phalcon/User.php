@@ -1,8 +1,7 @@
 <?php
 
-namespace MonPartenaire\Auth\Model;
+namespace BCosta\Mvc\Model\Phalcon;
 
-use BCosta\Mvc\Model\PhalconModel;
 use BCosta\Security\Password;
 
 use Phalcon\Mvc\Model\Validator\StringLength;
@@ -10,9 +9,9 @@ use Phalcon\Mvc\Model\Validator\Uniqueness;
 
 /**
  * Class User
- * @package MonPartenaire\Auth\model
+ * @package BCosta\Mvc\Model\Phalcon
  */
-class User extends PhalconModel
+class User extends Model
 {
     protected $id;
 
@@ -61,6 +60,14 @@ class User extends PhalconModel
      */
     public function getId()
     {
-        return $this->id;
+        return (int)$this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

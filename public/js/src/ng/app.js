@@ -23,6 +23,10 @@
                     controller: 'IndexController',
                     templateUrl: '/js/src/ng/partial/index/index.html'
                 })
+                .when('/place', {
+                    controller: 'PlaceController',
+                    templateUrl: '/js/src/ng/partial/place/index.html'
+                })
                 .otherwise({
                     redirectTo: '/'
                 });

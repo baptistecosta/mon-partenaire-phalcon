@@ -2,7 +2,7 @@
 
 namespace MonPartenaire\Auth\Controller;
 
-use MonPartenaire\Auth\Model\User;
+use BCosta\Mvc\Model\Phalcon\User;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 

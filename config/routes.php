@@ -18,6 +18,8 @@ $router->addPost('/api/place/scrap', ['module' => 'api', 'controller' => 'place'
 
 // Auth
 $router->addPost('/auth/user', ['module' => 'auth', 'controller' => 'user', 'action' => 'add']);
+$router->add('/auth/sign-in', ['controller' => 'auth', 'action' => 'signIn']);
+$router->add('/auth/sign-out', ['controller' => 'auth', 'action' => 'signOut']);
 
 $router->notFound(['controller' => 'error', 'action' => 'show404']);
 return $router;
