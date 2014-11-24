@@ -41,7 +41,6 @@ class Module implements ModuleDefinitionInterface
             return $dispatcher;
         });
 
-        //Registering the view component
         $di->set('view', function() {
             $view = new View();
             $view->disable();

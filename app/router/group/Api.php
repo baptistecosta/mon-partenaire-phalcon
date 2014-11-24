@@ -22,8 +22,12 @@ class Api extends Group
             'action' => 'index'
         ]);
         $this->addPost('/auth/register-user', [
-            'controller' => 'user',
-            'action' => 'add'
+            'controller' => 'auth',
+            'action' => 'registerUser'
+        ]);
+        $this->addPost('/auth/request-token', [
+            'controller' => 'auth',
+            'action' => 'requestToken'
         ]);
         $this->addGet('/place-markers', [
             'controller' => 'place_markers',
