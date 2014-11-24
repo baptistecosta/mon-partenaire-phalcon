@@ -1,35 +1,36 @@
 <?php
 
+use Phalcon\Loader;
 use Phalcon\Mvc\Application;
 use Phalcon\Exception;
 use Phalcon\Mvc\Router;
 
-// Read the configuration
-$config = new \Phalcon\Config\Adapter\Json('./../config/application.json');
+$config = new \Phalcon\Config\Adapter\Json('./../app/config/application.json');
 
-include('./../config/services.php');
+include('./../app/config/services.php');
+
+$loader = new Loader();
+$loader->registerNamespaces([
+    'MyTennisPal\\Router' => './../app/router/',
+])->register();
 
 try {
-    //Create an application
     $app = new Application($di);
-
-    // Register the installed modules
     $app->registerModules([
-        'www' => [
-            'className' => 'MonPartenaire\\Www\\Module',
-            'path' => '../apps/www/Module.php',
+        'frontend' => [
+            'className' => 'MyTennisPal\\FrontEnd\\Module',
+            'path' => './../app/module/frontend/Module.php',
         ],
         'api' => [
-            'className' => 'MonPartenaire\\Api\\Module',
-            'path' => '../apps/api/Module.php',
+            'className' => 'MyTennisPal\\Api\\Module',
+            'path' => './../app/module/api/Module.php',
         ],
         'auth' => [
-            'className' => 'MonPartenaire\\Auth\\Module',
-            'path' => '../apps/auth/Module.php',
+            'className' => 'MyTennisPal\\Auth\\Module',
+            'path' => './../app/module/auth/Module.php',
         ]
     ]);
 
-    //Handle the request
     echo $app->handle()->getContent();
 
 } catch (Exception $e) {
