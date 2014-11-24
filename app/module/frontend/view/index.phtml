@@ -54,7 +54,8 @@
             </div>
         </nav>
         <div class="content">
-            <?php echo $this->getContent() ?>
+            <?= $this->flash->output(); ?>
+            <?= $this->getContent() ?>
         </div>
     </body>
 </html>
