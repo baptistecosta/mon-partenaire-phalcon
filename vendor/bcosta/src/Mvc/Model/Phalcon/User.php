@@ -47,14 +47,6 @@ class User extends Model
         return $this->validationHasFailed() != true;
     }
 
-    public function beforeSave()
-    {
-        if ($this->password) {
-            $salt = $this->getDI()->getShared('security-salt');
-            $this->password = Password::sha1($this->password, $salt);
-        }
-    }
-
     /**
      * @return int
      */
@@ -69,5 +61,13 @@ class User extends Model
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 }
