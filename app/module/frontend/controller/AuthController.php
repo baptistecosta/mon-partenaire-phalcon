@@ -14,18 +14,9 @@ class AuthController extends Controller
             $email = $this->request->getPost('email', 'trim');
             $plainPassword = $this->request->getPost('password');
 
-            $salt = $this->getDI()->getShared('security-salt');
-            $password = Password::sha1($plainPassword, $salt);
+            $user = User::findFirstByEmail($email);
 
-            $user = User::findFirst([
-                'email = :email: AND password = :password: AND active = 1',
-                'bind' => [
-                    'email' => $email,
-                    'password' => $password
-                ]
-            ]);
-
-            if ($user) {
+            if ($user && $this->security->checkHash($plainPassword, $user->getPassword())) {
                 $this->session->set('auth', [
                     'id' => $user->getId(),
                     'email' => $user->getEmail()

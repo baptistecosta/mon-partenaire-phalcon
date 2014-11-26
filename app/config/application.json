@@ -2,16 +2,16 @@
   "database": {
     "myTennisPal": {
       "adapter": "Mysql",
-      "host": "127.0.0.1",
-      "username": "root",
-      "password": "",
+      "host": "192.168.56.1",
+      "username": "mytennispal",
+      "password": "159357",
       "name": "my_tennis_pal"
     },
     "auth": {
       "adapter": "Mysql",
-      "host": "127.0.0.1",
-      "username": "root",
-      "password": "",
+      "host": "192.168.56.1",
+      "username": "mytennispal",
+      "password": "159357",
       "name": "auth"
     }
   }
