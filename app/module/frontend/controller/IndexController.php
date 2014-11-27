@@ -8,6 +8,7 @@ class IndexController extends Controller
 {
     public function indexAction()
     {
-        //
+        $pw = $this->security->hash('s51Dz38e4cZ8');
+        die($pw);
     }
 }

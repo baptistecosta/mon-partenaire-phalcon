@@ -21,6 +21,10 @@ class Api extends Group
             'controller' => 'index',
             'action' => 'index'
         ]);
+        $this->add('/error', [
+            'controller' => 'error',
+            'action' => 'handleException'
+        ]);
         $this->addPost('/auth/register-user', [
             'controller' => 'auth',
             'action' => 'registerUser'

@@ -1,0 +1,12 @@
+{
+  "auth": [
+    "auth/registerUser",
+    "auth/requestToken"
+  ],
+  "place": [
+    "place/scrap",
+    "place_hint_markers/get",
+    "place_markers/get",
+    "scrapped_place_markers/get"
+  ]
+}
