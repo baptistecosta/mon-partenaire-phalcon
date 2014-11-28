@@ -10,9 +10,11 @@ class AccessToken extends Model
 {
     protected $id;
 
-    protected $user_id;
-
     protected $expires;
+
+    protected $clientId;
+
+    protected $userId;
 
     public function initialize()
     {
@@ -47,16 +49,16 @@ class AccessToken extends Model
      */
     public function getUserId()
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
     /**
-     * @param mixed $user_id
+     * @param mixed $userId
      * @return $this
      */
-    public function setUserId($user_id)
+    public function setUserId($userId)
     {
-        $this->user_id = $user_id;
+        $this->userId = $userId;
         return $this;
     }
 
@@ -78,12 +80,21 @@ class AccessToken extends Model
         return $this;
     }
 
-    public function toArray()
+    /**
+     * @return mixed
+     */
+    public function getClientId()
     {
-        return [
-            'id' => $this->getId(),
-            'user_id' => $this->getUserId(),
-            'expires' => $this->getExpires(),
-        ];
+        return $this->clientId;
+    }
+
+    /**
+     * @param string $clientId
+     * @return $this
+     */
+    public function setClientId($clientId)
+    {
+        $this->clientId = $clientId;
+        return $this;
     }
 }

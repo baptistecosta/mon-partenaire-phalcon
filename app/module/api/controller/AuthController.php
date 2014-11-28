@@ -4,8 +4,11 @@ namespace MyTennisPal\Api\Controller;
 
 use BCosta\Mvc\Model\Phalcon\AccessToken;
 use BCosta\Mvc\Model\Phalcon\User;
+use BCosta\Validator\Validator;
+use MyTennisPal\Api\Model\Client;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
+use Phalcon\Validation;
 
 /**
  * Class AuthController
@@ -29,31 +32,59 @@ class AuthController extends Controller
         }
     }
 
-    public function requestTokenAction()
+    public function authenticateAction()
     {
-        $email = $this->request->getPost('email', 'trim');
-        $password = $this->request->getPost('password', null, '');
-
-        $user = User::findFirstByEmail($email);
-
         $response = new Response();
         $response->setContentType('application/json');
 
-        if (!$user) {
-            return $response->setStatusCode(400, 'Bad request')->setJsonContent(['message' => "Email doesn't exist"]);
-        }
+        $grantType = $this->request->getPost('grantType', null, '');
+        switch ($grantType) {
+            case 'password':
+                /** @var Validator $validator */
+                $validator = $this->di->get('Validator\\Auth\\Password');
+                if (!$validator->isValid($this->request->getPost())) {
+                    return $response->setStatusCode(400, 'Bad request')->setJsonContent($validator->getMessages());
+                }
 
-        if (!$this->security->checkHash($password, $user->getPassword())) {
-            return $response->setStatusCode(401, "Unauthorized");
-        }
-        $accessToken = new AccessToken();
-        $accessToken->setId(sha1(uniqid(mt_rand(), true)))
-            ->setUserId($user->getId())
-            ->setExpires(date('Y-m-d H:i:s', strtotime('+24 hours')));
+                // Client auth
+                $clientId = $validator->getValue('clientId');
+                $clientSecret = $validator->getValue('clientSecret');
 
-        if (!$accessToken->save()) {
-            return $response->setStatusCode(500, 'Server error');
+                /** @var Client $client */
+                $client = Client::findFirstByClientId($clientId);
+                if (!$client) {
+                    return $response->setStatusCode(400, 'Bad request')->setJsonContent(['message' => "Client doesn't exist"]);
+                }
+                if (!$this->security->checkHash($clientSecret, $client->getClientSecret())) {
+                    return $response->setStatusCode(401, 'Unauthorized client');
+                }
+
+                // User auth
+                $email = $validator->getValue('email');
+                $password = $validator->getValue('password');
+
+                /** @var User $user */
+                $user = User::findFirstByEmail($email);
+                if (!$user) {
+                    return $response->setStatusCode(400, 'Bad request')->setJsonContent(['message' => "User doesn't exist"]);
+                }
+                if (!$this->security->checkHash($password, $user->getPassword())) {
+                    return $response->setStatusCode(401, 'Unauthorized user');
+                }
+
+                $accessToken = new AccessToken();
+                $accessToken->setId(sha1(uniqid(mt_rand(), true)))
+                    ->setClientId($client->getClientId())
+                    ->setUserId($user->getId())
+                    ->setExpires(date('Y-m-d H:i:s', strtotime('+24 hours')));
+
+                if (!$accessToken->save()) {
+                    return $response->setStatusCode(500, 'Server error');
+                }
+                return $response->setJsonContent($accessToken->toArray());
+
+            default:
+                return $response->setStatusCode(400, 'Bad request')->setJsonContent(['message' => 'Grant type not supported']);
         }
-        return $response->setJsonContent($accessToken->toArray());
     }
 }

@@ -1,7 +1,7 @@
 {
   "auth": [
-    "auth/registerUser",
-    "auth/requestToken"
+    "auth/authenticate",
+    "auth/registerUser"
   ],
   "place": [
     "place/scrap",

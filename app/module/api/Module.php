@@ -18,6 +18,7 @@ class Module implements ModuleDefinitionInterface
         $loader->registerNamespaces([
             'MyTennisPal\\Api\\Controller' => './../app/module/api/controller/',
             'MyTennisPal\\Api\\Model' => './../app/module/api/model/',
+            'MyTennisPal\\Api\\Model\\DataMapper' => './../app/module/api/model/data_mapper',
             'MyTennisPal\\Api\\Plugin' => './../app/module/api/plugin/',
             'BCosta' => './../vendor/bcosta/src',
         ])->register();
@@ -27,9 +28,20 @@ class Module implements ModuleDefinitionInterface
     {
         $di->set('dispatcher', function() use ($di) {
             $eventsManager = $di->getShared('eventsManager');
-            $eventsManager->attach('dispatch', new SecurityPlugin());
-            $eventsManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, $exception) use ($di) {
-                echo json_encode(['message' => $exception->getMessage()]);
+
+            $eventsManager->attach('dispatch', $di->getShared('MyTennisPal\\Api\\Plugin\\Security'));
+
+            $eventsManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, \Exception $exception) use ($di) {
+                header("HTTP/1.1 500 Server error");
+                header('Content-type: application/json');
+                echo json_encode([
+                    'exception' => [
+                        'message' => $exception->getMessage(),
+                        'file' => $exception->getFile(),
+                        'line' => $exception->getLine(),
+                        'trace' => $exception->getTrace()
+                    ]
+                ]);
                 exit;
             });
 

@@ -2,9 +2,7 @@
 
 namespace MyTennisPal\Api\Plugin;
 
-use MyTennisPal\Api\Model\Client;
-use Phalcon\Acl;
-use Phalcon\Config\Adapter\Json as JsonConfig;
+use MyTennisPal\Api\Model\DataMapper\Client as ClientDataMapper;
 use Phalcon\Dispatcher;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\User\Plugin;
@@ -15,70 +13,51 @@ use Phalcon\Mvc\User\Plugin;
  */
 class SecurityPlugin extends Plugin
 {
+    /**
+     * @var ClientDataMapper
+     */
+    protected $clientDataMapper;
+
+    /**
+     * @var array
+     */
+    protected $publicResources;
+
+    /**
+     * @var array
+     */
+    protected $scopes;
+
+    public function __construct(ClientDataMapper $clientDataMapper, array $publicResources, array $scopes) {
+        $this->clientDataMapper = $clientDataMapper;
+        $this->publicResources = $publicResources;
+        $this->scopes = $scopes;
+    }
+
     public function beforeDispatch(Event $event, Dispatcher $dispatcher)
     {
-        $requestedResource = $dispatcher->getControllerName() . '/' . $dispatcher->getActionName();
-        if ($this->isPublicResource($requestedResource)) {
+        $resource = $dispatcher->getControllerName() . '/' . $dispatcher->getActionName();
+        if (in_array($resource, $this->publicResources)) {
             return true;
         }
-
-        $clientId = $_SERVER['PHP_AUTH_USER'];
-        $password = $_SERVER['PHP_AUTH_PW'];
-
-        if (!$client = $this->authenticateClient($clientId, $password)) {
+        $accessToken = $this->request->get('access_token', null, '');
+        $clientScopes = $this->clientDataMapper->getScopesFromAccessToken($accessToken);
+        if (!$this->isClientAuthorized($this->scopes, $clientScopes, $resource)) {
+            $this->response->setStatusCode(401, 'Unauthorized');
             return false;
         }
-        return $this->authorizeClient($client->getScopes(), $requestedResource);
+        return true;
     }
 
-    private function isPublicResource($requestedResource)
-    {
-        $publicResources = new JsonConfig('./../app/config/public-resource.json');
-        return in_array($requestedResource, (array)$publicResources);
-    }
-
-    /**
-     * Client authentication process
-     *
-     * @param string $user
-     * @param string $password
-     * @return bool
-     */
-    private function authenticateClient($user, $password)
-    {
-        if (!$user || !$password) {
-            return false;
-        }
-
-        if (!$client = Client::findFirstByClientId($user)) {
-            return false;
-        }
-
-        $secret = $client->getClientSecret();
-        if (!$this->security->checkHash($password, $secret)) {
-            return false;
-        }
-        return $client;
-    }
-
-    /**
-     * Client authorization process
-     *
-     * @param $clientScopes
-     * @param $requestedResource
-     * @return bool
-     */
-    private function authorizeClient($clientScopes, $requestedResource)
+    private function isClientAuthorized($scopes, $clientScopes, $resource)
     {
         if ($clientScopes === '*') {
             return true;
         }
-
-        $scopesResources = new JsonConfig('./../app/config/scope-resources.json');
         $clientScopes = explode(' ', $clientScopes);
         foreach ($clientScopes as $clientScope) {
-            foreach ($scopesResources as $scope => $resources) {
-                if ($scope === $clientScope && in_array($requestedResource, (array)$resources)) {
+            foreach ($scopes as $scope => $resources) {
+                if ($scope === $clientScope && in_array($resource, (array)$resources)) {
                     return true;
                 }
             }

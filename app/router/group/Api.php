@@ -25,13 +25,13 @@ class Api extends Group
             'controller' => 'error',
             'action' => 'handleException'
         ]);
+        $this->addPost('/auth', [
+            'controller' => 'auth',
+            'action' => 'authenticate'
+        ]);
         $this->addPost('/auth/register-user', [
             'controller' => 'auth',
             'action' => 'registerUser'
-        ]);
-        $this->addPost('/auth/request-token', [
-            'controller' => 'auth',
-            'action' => 'requestToken'
         ]);
         $this->addGet('/place-markers', [
             'controller' => 'place_markers',
