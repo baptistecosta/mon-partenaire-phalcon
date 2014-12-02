@@ -1,4 +1,4 @@
 [
-  "api/auth",
+  "auth/authenticate",
   "index/index"
 ]

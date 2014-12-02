@@ -1,8 +1,9 @@
 <?php
 
 use BCosta\Filter\Geolocation;
+use MyTennisPal\Api\Model\DataMapper\AccessTokenDataMapper;
+use MyTennisPal\Api\Model\DataMapper\ClientDataMapper;
 use MyTennisPal\Api\Plugin\SecurityPlugin;
-use MyTennisPal\Api\Model\DataMapper\Client as ClientDataMapper;
 use Phalcon\Config\Adapter\Json as JsonConfig;
 use Phalcon\DI\FactoryDefault;
 use Phalcon\Filter;
@@ -42,6 +43,7 @@ $di->setShared('filter', function() {
 
 $di->setShared('MyTennisPal\\Api\\Plugin\\Security', function() {
     return new SecurityPlugin(
+        new AccessTokenDataMapper(),
         new ClientDataMapper(),
         (array) new JsonConfig('./../app/config/public-resource.json'),
         (array) new JsonConfig('./../app/config/scopes.json')

@@ -65,4 +65,14 @@
         }
     ]);
 
+    app.factory('auth', [
+        function() {
+            return {
+                requestAccessToken: function() {
+
+                }
+            }
+        }
+    ]);
+
 })();

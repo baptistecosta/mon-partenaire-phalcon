@@ -22,8 +22,8 @@ class Module implements ModuleDefinitionInterface
     public function registerServices($di)
     {
         $di->set('dispatcher', function() use ($di) {
-            $eventManager = $di->getShared('eventsManager');
-            $eventManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, $exception) {
+            $eventsManager = $di->getShared('eventsManager');
+            $eventsManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, $exception) {
                 switch ($exception->getCode()) {
                     case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
                     case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
@@ -37,6 +37,7 @@ class Module implements ModuleDefinitionInterface
 
             $dispatcher = new Dispatcher();
             $dispatcher->setDefaultNamespace('MyTennisPal\\FrontEnd\\Controller');
+            $dispatcher->setEventsManager($eventsManager);
             return $dispatcher;
         });
 

@@ -2,7 +2,7 @@
 
 namespace MyTennisPal\Api;
 
-use MyTennisPal\Api\Plugin\SecurityPlugin;
+use Phalcon\Events\Event;
 use Phalcon\Http\Response;
 use Phalcon\Loader;
 use Phalcon\Mvc\Dispatcher;
@@ -29,7 +29,7 @@ class Module implements ModuleDefinitionInterface
         $di->set('dispatcher', function() use ($di) {
             $eventsManager = $di->getShared('eventsManager');
 
-            $eventsManager->attach('dispatch', $di->getShared('MyTennisPal\\Api\\Plugin\\Security'));
+            $eventsManager->attach('dispatch:beforeExecuteRoute', $di->getShared('MyTennisPal\\Api\\Plugin\\Security'));
 
             $eventsManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, \Exception $exception) use ($di) {
                 header("HTTP/1.1 500 Server error");

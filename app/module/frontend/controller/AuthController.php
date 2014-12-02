@@ -2,8 +2,7 @@
 
 namespace MyTennisPal\FrontEnd\Controller;
 
-use BCosta\Mvc\Model\Phalcon\User;
-use BCosta\Security\Password;
+use MyTennisPal\Frontend\Model\AccessTokenDataMapper;
 use Phalcon\Mvc\Controller;
 
 class AuthController extends Controller
@@ -14,7 +13,11 @@ class AuthController extends Controller
             $email = $this->request->getPost('email', 'trim');
             $plainPassword = $this->request->getPost('password');
 
-            $user = User::findFirstByEmail($email);
+
+            $accessTokenDataMapper = new AccessTokenDataMapper();
+            $response = $accessTokenDataMapper->request($email, $plainPassword);
+
+/*            $user = User::findFirstByEmail($email);
 
             if ($user && $this->security->checkHash($plainPassword, $user->getPassword())) {
                 $this->session->set('auth', [
@@ -28,7 +31,7 @@ class AuthController extends Controller
 
             $this->flash->error('Wrong email/password');
 
-            $this->view->setVar('email', $email);
+            $this->view->setVar('email', $email);*/
         }
     }
 
