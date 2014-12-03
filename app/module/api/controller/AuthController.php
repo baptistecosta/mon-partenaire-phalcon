@@ -55,7 +55,9 @@ class AuthController extends Controller
                 if (!$client) {
                     return $response->setStatusCode(400, 'Bad request')->setJsonContent(['message' => "Client doesn't exist"]);
                 }
-                if (!$this->security->checkHash($clientSecret, $client->getClientSecret())) {
+
+                // If the client is "confidential", check the client secret
+                if ($client->getClientSecret() && !$this->security->checkHash($clientSecret, $client->getClientSecret())) {
                     return $response->setStatusCode(401, 'Unauthorized client');
                 }
 
@@ -69,7 +71,7 @@ class AuthController extends Controller
                     return $response->setStatusCode(400, 'Bad request')->setJsonContent(['message' => "User doesn't exist"]);
                 }
                 if (!$this->security->checkHash($password, $user->getPassword())) {
-                    return $response->setStatusCode(401, 'Unauthorized user');
+                    return $response->setStatusCode(401, 'Unauthorized user')->setJsonContent(['message' => "Invalid username/password"]);
                 }
 
                 $accessToken = new AccessToken();
@@ -81,7 +83,10 @@ class AuthController extends Controller
                 if (!$accessToken->save()) {
                     return $response->setStatusCode(500, 'Server error');
                 }
-                return $response->setJsonContent($accessToken->toArray());
+                return $response->setJsonContent([
+                    'message' => 'success',
+                    'accessToken' => $accessToken->toArray()
+                ]);
 
             default:
                 return $response->setStatusCode(400, 'Bad request')->setJsonContent(['message' => 'Grant type not supported']);

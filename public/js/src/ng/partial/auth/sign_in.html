@@ -1,0 +1,33 @@
+<h1>Sign In</h1>
+<div class="row">
+    <div class="form-group col-sm-2">
+        <input id="email"
+               name="email"
+               ng-model="email"
+               placeholder="Login"
+               class="form-control input-sm"
+               maxlength="64"
+               type="text"
+               required="required">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group col-sm-2">
+        <input id="password"
+               name="password"
+               ng-model="password"
+               placeholder="Password"
+               class="form-control input-sm"
+               maxlength="64"
+               type="password"
+               required="required">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group col-sm-2">
+        <div class="submit">
+            <button class="btn btn-sm btn-primary" ng-click="requestAccessToken(email, password)">Sign In</button>
+        </div>
+    </div>
+</div>
+<a href="/auth/register">Register</a>

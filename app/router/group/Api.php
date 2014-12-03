@@ -33,6 +33,10 @@ class Api extends Group
             'controller' => 'auth',
             'action' => 'registerUser'
         ]);
+        $this->addGet('/me', [
+            'controller' => 'user',
+            'action' => 'get'
+        ]);
         $this->addGet('/place-markers', [
             'controller' => 'place_markers',
             'action' => 'get'

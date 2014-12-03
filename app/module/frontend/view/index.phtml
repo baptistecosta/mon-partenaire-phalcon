@@ -16,6 +16,7 @@
 
         <script type="text/javascript" src="/js/src/ng/app.js"></script>
         <script type="text/javascript" src="/js/src/ng/controller/index.js"></script>
+        <script type="text/javascript" src="/js/src/ng/controller/auth.js"></script>
         <script type="text/javascript" src="/js/src/ng/controller/place.js"></script>
         <script type="text/javascript" src="/js/src/ng/factory/marker.js"></script>
         <script type="text/javascript" src="/js/src/ng/resource/scrapped_place_marker/mapper.js"></script>
@@ -53,7 +54,9 @@
                                 </ul>
                             </li>
                         <?php } else { ?>
-                            <a href="/auth/sign-in">Se connecter</a>
+                            <li>
+                                <a href="/auth/sign-in">Se connecter</a>
+                            </li>
                         <?php }?>
                     </ul>
 

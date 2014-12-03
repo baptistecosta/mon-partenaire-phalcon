@@ -13,8 +13,7 @@ class Module implements ModuleDefinitionInterface
     {
         $loader = new Loader();
         $loader->registerNamespaces([
-            'MyTennisPal\\FrontEnd\\Controller' => '../app/module/frontend/controller/',
-            'MyTennisPal\\FrontEnd\\Model' => '../app/module/frontend/model/',
+            'MyTennisPal\\FrontEnd' => '../app/module/Frontend/',
             'BCosta' => './../vendor/bcosta/src',
         ])->register();
     }
@@ -43,7 +42,7 @@ class Module implements ModuleDefinitionInterface
 
         $di->set('view', function() {
             $view = new View();
-            $view->setViewsDir('../app/module/frontend/view/');
+            $view->setViewsDir('../app/module/Frontend/View/');
             return $view;
         });
     }

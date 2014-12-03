@@ -2,7 +2,10 @@
 
 namespace MyTennisPal\Api;
 
-use Phalcon\Events\Event;
+use MyTennisPal\Api\Plugin\SandBox;
+use MyTennisPal\Api\Plugin\BodyParser;
+use MyTennisPal\Api\Plugin\ExceptionHandler;
+use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Http\Response;
 use Phalcon\Loader;
 use Phalcon\Mvc\Dispatcher;
@@ -16,10 +19,7 @@ class Module implements ModuleDefinitionInterface
     {
         $loader = new Loader();
         $loader->registerNamespaces([
-            'MyTennisPal\\Api\\Controller' => './../app/module/api/controller/',
-            'MyTennisPal\\Api\\Model' => './../app/module/api/model/',
-            'MyTennisPal\\Api\\Model\\DataMapper' => './../app/module/api/model/data_mapper',
-            'MyTennisPal\\Api\\Plugin' => './../app/module/api/plugin/',
+            'MyTennisPal\\Api' => './../app/module/Api/',
             'BCosta' => './../vendor/bcosta/src',
         ])->register();
     }
@@ -27,23 +27,12 @@ class Module implements ModuleDefinitionInterface
     public function registerServices($di)
     {
         $di->set('dispatcher', function() use ($di) {
+            /** @var EventsManager $eventsManager */
             $eventsManager = $di->getShared('eventsManager');
-
+            $eventsManager->attach('dispatch:beforeExecuteRoute', new BodyParser());
             $eventsManager->attach('dispatch:beforeExecuteRoute', $di->getShared('MyTennisPal\\Api\\Plugin\\Security'));
-
-            $eventsManager->attach('dispatch:beforeException', function($event, Dispatcher $dispatcher, \Exception $exception) use ($di) {
-                header("HTTP/1.1 500 Server error");
-                header('Content-type: application/json');
-                echo json_encode([
-                    'exception' => [
-                        'message' => $exception->getMessage(),
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'trace' => $exception->getTrace()
-                    ]
-                ]);
-                exit;
-            });
+            $eventsManager->attach('dispatch:beforeException', new ExceptionHandler());
+            $eventsManager->attach('dispatch:afterInitialize', new SandBox());
 
             $dispatcher = new Dispatcher();
             $dispatcher->setDefaultNamespace('MyTennisPal\\Api\\Controller');

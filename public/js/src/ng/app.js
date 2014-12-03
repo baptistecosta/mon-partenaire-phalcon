@@ -23,6 +23,10 @@
                     controller: 'IndexController',
                     templateUrl: '/js/src/ng/partial/index/index.html'
                 })
+                .when('/sign-in', {
+                    controller: 'SignInController',
+                    templateUrl: '/js/src/ng/partial/auth/sign_in.html'
+                })
                 .when('/place', {
                     controller: 'PlaceController',
                     templateUrl: '/js/src/ng/partial/place/index.html'

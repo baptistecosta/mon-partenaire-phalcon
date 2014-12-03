@@ -9,8 +9,12 @@ class IndexController extends Controller
     public function indexAction()
     {
 //        phpinfo();
-        if ($this->session->has('auth')) {
-            $auth = $this->session->get('auth');
+        if ($this->session->has('accessToken')) {
+            $accessToken = $this->session->get('accessToken');
+        }
+
+        if ($this->session->has('user')) {
+            $auth = $this->session->get('user');
         }
     }
 }

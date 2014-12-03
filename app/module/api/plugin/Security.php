@@ -9,10 +9,10 @@ use Phalcon\Events\Event;
 use Phalcon\Mvc\User\Plugin;
 
 /**
- * Class SecurityPlugin
- * @package MonPartenaire\module\api\plugin
+ * Class Security
+ * @package MyTennisPal\Api\Plugin
  */
-class SecurityPlugin extends Plugin
+class Security extends Plugin
 {
     /**
      * @var AccessTokenDataMapper
@@ -50,7 +50,7 @@ class SecurityPlugin extends Plugin
             return true;
         }
 
-        $accessTokenId = $this->request->get('access_token', null, '');
+        $accessTokenId = $this->request->get('accessToken', null, '');
         $accessToken = $this->accessTokenDataMapper->findFirstById($accessTokenId);
         if (!$accessToken) {
             $this->onInvalidAccessToken();
