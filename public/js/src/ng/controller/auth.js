@@ -7,19 +7,15 @@
         '$scope',
         '$http',
         '$location',
-        function($scope, $http, $location) {
+        'accessToken',
+        function($scope, $http, $location, accessToken) {
             $scope.email = '';
             $scope.password = '';
 
             $scope.requestAccessToken = function(email, password) {
-                $http.post('/api/auth', {
-                    grantType: 'password',
-                    clientId: 'mytennispal.frontend-client',
-                    email: email,
-                    password: password
-                }).success(function(res) {
+                accessToken.request(email, password).success(function(res) {
                     if (res.message === 'success') {
-                        localStorage.setItem('accessToken', res.accessToken.id);
+                        accessToken.set(res.accessToken.id);
                         $location.path('/');
                     }
                 }).error(function(err) {

@@ -2,6 +2,7 @@
 <html lang="fr" ng-app="myTennisPal">
     <head>
         <meta charset="utf-8"/>
+        <base href="/"/>
         <title>Mon partenaire - Accueil</title>
 
         <link href="/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css"/>
@@ -40,7 +41,7 @@
                             <a href="/">Accueil</a>
                         </li>
                         <li>
-                            <a href="#/place">Places</a>
+                            <a href="/place">Places</a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav pull-right">
@@ -50,12 +51,12 @@
                                     <?= $this->session->get('auth')['email']; ?> <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/auth/sign-out">Se déconnecter</a></li>
+                                    <li><a href="/sign-out">Se déconnecter</a></li>
                                 </ul>
                             </li>
                         <?php } else { ?>
                             <li>
-                                <a href="/auth/sign-in">Se connecter</a>
+                                <a href="/sign-in">Se connecter</a>
                             </li>
                         <?php }?>
                     </ul>
@@ -64,6 +65,7 @@
             </div>
         </nav>
         <div class="content">
+            <flash-unauthorized></flash-unauthorized>
             <?= $this->flash->output(); ?>
             <?= $this->getContent() ?>
         </div>

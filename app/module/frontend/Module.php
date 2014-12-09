@@ -42,6 +42,7 @@ class Module implements ModuleDefinitionInterface
 
         $di->set('view', function() {
             $view = new View();
+            $view->setLayout('../path');
             $view->setViewsDir('../app/module/Frontend/View/');
             return $view;
         });
