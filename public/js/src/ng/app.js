@@ -1,8 +1,140 @@
 (function() {
     'use strict';
 
+    /**
+     * Bootstrap
+     */
+    angular.element(document).ready(function() {
+        var injector = angular.injector(['ng', 'authentication']),
+            meLoader = injector.get('meLoader');
+
+        meLoader.request().then(function() {
+            console.log('Bootstrapping application...');
+            angular.bootstrap(document, ['myTennisPal']);
+        });
+    });
+
+    /**
+     * Utils module
+     */
+    var utils = angular.module('utils', []);
+
+    utils.factory('storage', [
+        function() {
+            return {
+                get: function(name) {
+                    localStorage.getItem(name);
+                },
+                set: function(name, value) {
+                    localStorage.setItem(name, value);
+                },
+                remove: function() {
+                    localStorage.removeItem(name);
+                }
+            }
+        }
+    ]);
+
+    /**
+     * Authentication module
+     */
+    var authentication = angular.module('authentication', [
+        'utils'
+    ]);
+
+    authentication.value('acl', {
+        '/': '*',
+        '/sign-in': '*',
+        '/sign-out': '*',
+        '/place': [
+            'pal',
+            'club'
+        ]
+    });
+
+    authentication.factory('authorization', [
+        'acl',
+        function(acl) {
+            return {
+                isAllowed: function(role, requestedResource) {
+                    for (var resource in acl) {
+                        if (resource === requestedResource) {
+                            var allowedRoles = acl[resource];
+                            if (typeof allowedRoles === 'string') {
+                                return allowedRoles === '*' || allowedRoles === role;
+                            } else {
+                                for (var i = 0; i < allowedRoles.length; i++) {
+                                    if (role === allowedRoles[i]) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]);
+
+    authentication.factory('accessToken', [
+        '$http',
+        function($http) {
+            return {
+                request: function(email, password) {
+                    return $http.post('/api/auth', {
+                        grantType: 'password',
+                        clientId: 'mytennispal.frontend-client',
+                        email: email,
+                        password: password
+                    });
+                }
+            }
+        }
+    ]);
+
+    authentication.factory('meLoader', [
+        '$http',
+        '$q',
+        'accessToken',
+        'storage',
+        function($http, $q, accessToken, storage) {
+            return {
+                request: function() {
+                    var deferred = $q.defer(),
+                        token = storage.get('accessToken');
+
+                    if (!token) {
+                        deferred.resolve();                    } else {
+                        $http.get('/api/me', {
+                            params: {accessToken: token}
+                        }).success(function(data, status, headers, config) {
+                            storage.set('email', data.email);
+                            storage.set('role', data.role);
+
+                            deferred.resolve();
+                        }).error(function(data, status, headers, config) {
+                            if (status == 401) {
+                                storage.remove('accessToken');
+                                storage.remove('email');
+                                storage.remove('role');
+                            }
+                            deferred.resolve();
+                        });
+                    }
+                    return deferred.promise;
+                }
+            };
+        }
+    ]);
+
+    /**
+     * Application module
+     */
     var app = angular.module('myTennisPal', [
-        'ngRoute'
+        'ngRoute',
+        'authentication',
+        'utils'
     ]);
 
     app.config([
@@ -14,19 +146,6 @@
                 .when('/', {
                     controller: 'IndexController',
                     templateUrl: '/js/src/ng/partial/index/index.html'
-                    //resolve: {
-                    //    me: [
-                    //        '$q',
-                    //        'me',
-                    //        function($q, me) {
-                    //            var defer = $q.defer();
-                    //            me.request(function() {
-                    //                defer.resolve();
-                    //            });
-                    //            return defer.promise;
-                    //        }
-                    //    ]
-                    //}
                 })
                 .when('/sign-in', {
                     controller: 'SignInController',
@@ -42,115 +161,52 @@
         }
     ]);
 
-    app.run([
-        '$rootScope',
-        '$location',
-        function($rootScope, $location) {
-            $rootScope.$on('$locationChangeStart', function(scope, to, from) {
-                $rootScope.$emit('flash.unauthorized.hide');
-                //if (!auth.isAllowed(me.getRole(), $location.path())) {
-                //    $location.path('/');
-                //    $rootScope.$emit('flash.unauthorized.show');
-                //}
-            });
-        }]
-    );
-
-/*    app.factory('accessToken', [
-        '$http',
-        function($http) {
-            return {
-                request: function(email, password) {
-                    return $http.post('/api/auth', {
-                        grantType: 'password',
-                        clientId: 'mytennispal.frontend-client',
-                        email: email,
-                        password: password
-                    });
-                },
-                get: function() {
-                    return localStorage.getItem('accessToken');
-                },
-                set: function(accessToken) {
-                    localStorage.setItem('accessToken', accessToken);
-                }
-            }
-        }
-    ]);*/
-
-/*    app.factory('me', [
-        '$http',
-        'accessToken',
-        function($http, accessToken) {
-            var data;
+    app.factory('me', [
+        'storage',
+        function(storage) {
+            var email,
+                role;
 
             var me = {
                 init: function() {
-                    data = {
-                        email: '',
-                        role: ''
-                    }
-                },
-                request: function(callback) {
-                    var accessToken = accessToken.get();
-                    if (!accessToken) {
-                        return null;
-                    }
-                    $http.get('/api/me', {
-                        params: {accessToken: accessToken.get()}
-                    }).success(function(res) {
-                        console.log(res);
-                    }).error(function(err) {
-                        console.error(err);
-                    });
+                    email = me.getEmail();
+                    role = me.getRole();
                 },
                 getEmail: function() {
-                    return data.email;
+                    if (!email) {
+                        email = storage.get('email');
+                    }
+                    return email;
                 },
                 getRole: function() {
-                    return data.role;
+                    if (!role) {
+                        role = storage.get('role');
+                    }
+                    return role;
                 }
             };
 
-            me.reset();
             return me;
         }
-    ]);*/
+    ]);
 
-    app.value('acl', {
-        '/': '*',
-        '/sign-in': '*',
-        '/sign-out': '*',
-        '/place': [
-            //'pal',
-            'club'
-        ]
-    });
+    app.run([
+        '$rootScope',
+        '$location',
+        'authorization',
+        'me',
+        function($rootScope, $location, authorization, me) {
+            me.init();
 
-/*    app.factory('auth', [
-        'acl',
-        function(acl) {
-            return {
-                isAllowed: function(role, requestedResource) {
-                    for (var resource in acl) {
-                        if (resource === requestedResource) {
-                            var roles = acl[resource];
-                            if (typeof roles === 'string') {
-                                return roles === '*' || roles === role;
-                            } else {
-                                for (var i = 0; i < roles.length; i++) {
-                                    if (role === roles[i]) {
-                                        return true;
-                                    }
-                                }
-                                return false;
-                            }
-                        }
-                    }
+            $rootScope.$on('$locationChangeStart', function(scope, to, from) {
+                $rootScope.$emit('flash.unauthorized.hide');
+                if (!authorization.isAllowed(me.getRole(), $location.path())) {
+                    $location.path('/sign-in');
+                    $rootScope.$emit('flash.unauthorized.show');
                 }
-            }
+            });
         }
-    ]);*/
+    ]);
 
     app.service('url', [
         function() {
